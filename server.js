@@ -36,6 +36,11 @@ app.get('/', (req, res) => {
   res.render('home', { title: 'Home' });
 });
 
+// Categories page
+app.get('/categories', (req, res) => {
+  res.render('categories', { title: 'Service Categories' });
+});
+
 // Organizations page
 app.get('/organizations', (req, res) => {
   res.render('organizations', { title: 'Our Partner Organizations' });
