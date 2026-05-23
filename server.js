@@ -2,57 +2,86 @@ import express from 'express';
 import { fileURLToPath } from 'url';
 import path from 'path';
 
-// The application environment
-const NODE_ENV = process.env.NODE_ENV?.toLowerCase() || 'production';
+import { testConnection } from './src/models/db.js';
+import { getAllOrganizations } from './src/models/organizations.js';
+import { getAllProjects } from './src/models/projects.js';
+import { getAllCategories } from './src/models/categories.js';
 
-// The port number the server will listen on
+const NODE_ENV = process.env.NODE_ENV?.toLowerCase() || 'production';
 const PORT = process.env.PORT || 3000;
 
 const app = express();
 
-/**
- * __filename and __dirname (needed for ES Modules)
- */
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-/**
- * Serve static files from the public folder
- */
+// Static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-/**
- * Configure EJS
- */
+// EJS setup
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'src/views'));
 
-/**
- * Routes
- */
-
-// Home page
+// =======================
+// HOME
+// =======================
 app.get('/', (req, res) => {
   res.render('home', { title: 'Home' });
 });
 
-// Categories page
-app.get('/categories', (req, res) => {
-  res.render('categories', { title: 'Service Categories' });
+// =======================
+// ORGANIZATIONS (DB)
+// =======================
+app.get('/organizations', async (req, res) => {
+
+  const organizations = await getAllOrganizations();
+  const title = 'Our Partner Organizations';
+
+  res.render('organizations', {
+    title,
+    organizations
+  });
 });
 
-// Organizations page
-app.get('/organizations', (req, res) => {
-  res.render('organizations', { title: 'Our Partner Organizations' });
+// =======================
+// PROJECTS (DB + JOIN)
+// =======================
+app.get('/projects', async (req, res) => {
+
+  const projects = await getAllProjects();
+  const title = 'Service Projects';
+
+  res.render('projects', {
+    title,
+    projects
+  });
 });
 
-// Projects page
-app.get('/projects', (req, res) => {
-  res.render('projects', { title: 'Service Projects' });
+// =======================
+// CATEGORIES (DB)
+// =======================
+app.get('/categories', async (req, res) => {
+
+  const categories = await getAllCategories();
+  const title = 'Service Categories';
+
+  res.render('categories', {
+    title,
+    categories
+  });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running at http://127.0.0.1:${PORT}`);
-  console.log(`Environment: ${NODE_ENV}`);
-});
+// =======================
+// SERVER START + DB TEST
+// =======================
+app.listen(PORT, async () => {
+  try {
+    await testConnection();
 
+    console.log(`Server is running at http://127.0.0.1:${PORT}`);
+    console.log(`Environment: ${NODE_ENV}`);
+
+  } catch (error) {
+    console.error('Error connecting to the database:', error);
+  }
+});
