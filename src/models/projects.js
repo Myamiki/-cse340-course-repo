@@ -19,7 +19,6 @@ const getAllProjects = async () => {
     return result.rows;
 };
 
-
 // =========================
 // Get projects by organization
 // =========================
@@ -41,7 +40,6 @@ const getProjectsByOrganizationId = async (organizationId) => {
     return result.rows;
 };
 
-
 // =========================
 // Get upcoming projects
 // =========================
@@ -58,7 +56,6 @@ const getUpcomingProjects = async (limit) => {
         FROM project p
         JOIN organization o
             ON p.organization_id = o.organization_id
-        WHERE p.project_date >= CURRENT_DATE
         ORDER BY p.project_date
         LIMIT $1;
     `;
@@ -66,7 +63,6 @@ const getUpcomingProjects = async (limit) => {
     const result = await db.query(query, [limit]);
     return result.rows;
 };
-
 
 // =========================
 // Get single project details
