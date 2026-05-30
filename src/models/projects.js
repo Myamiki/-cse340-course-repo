@@ -4,7 +4,6 @@ import db from './db.js';
 // Get all projects
 // =========================
 const getAllProjects = async () => {
-
     const query = `
         SELECT
             project_id,
@@ -25,7 +24,6 @@ const getAllProjects = async () => {
 // Get projects by organization
 // =========================
 const getProjectsByOrganizationId = async (organizationId) => {
-
     const query = `
         SELECT
             project_id,
@@ -48,7 +46,6 @@ const getProjectsByOrganizationId = async (organizationId) => {
 // Get upcoming projects
 // =========================
 const getUpcomingProjects = async (limit) => {
-
     const query = `
         SELECT
             p.project_id,
@@ -75,7 +72,6 @@ const getUpcomingProjects = async (limit) => {
 // Get single project details
 // =========================
 const getProjectDetails = async (projectId) => {
-
     const query = `
         SELECT
             p.project_id,
@@ -100,7 +96,6 @@ const getProjectDetails = async (projectId) => {
 // Get categories for a project
 // =========================
 const getCategoriesByProjectId = async (projectId) => {
-
     const query = `
         SELECT
             c.category_id,
@@ -120,7 +115,6 @@ const getCategoriesByProjectId = async (projectId) => {
 // Get projects by category
 // =========================
 const getProjectsByCategoryId = async (categoryId) => {
-
     const query = `
         SELECT
             p.project_id,
@@ -144,7 +138,7 @@ const getProjectsByCategoryId = async (categoryId) => {
 
 
 // =========================
-// EXPORT ALL FUNCTIONS
+// Export all functions
 // =========================
 export {
     getAllProjects,
