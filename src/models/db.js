@@ -13,10 +13,15 @@ import { Pool } from 'pg';
  * postgresql://username:password@host:port/database
  */
 const pool = new Pool({
-    connectionString: process.env.DB_URL,
-    ssl: true
+    user: 'cse340_course_repo_db',
+    host: 'dpg-d888vr77f7vs73e6mnmg-a.oregon-postgres.render.com',
+    database: 'cse340_course_repo_db_xuer',
+    password: 'xlBYKLBbZ1JxxEyKgzQk93nxvIcvOD11',
+    port: 5432,
+    ssl: {
+        rejectUnauthorized: false
+    }
 });
-
 /**
  * Common SSL Issue:
  *

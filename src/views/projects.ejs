@@ -8,14 +8,34 @@
     <ul>
         <% projects.forEach(project => { %>
             <li>
-                <strong><%= project.title %></strong>
-                (<%= project.organization_name %>)
+                <!-- Project title (CLICKABLE → project details page) -->
+                <strong>
+                    <a href="/project/<%= project.project_id %>">
+                        <%= project.title %>
+                    </a>
+                </strong>
+
+                <!-- Organization name (CLICKABLE → organization page) -->
+                (
+                <a href="/organization/<%= project.organization_id %>">
+                    <%= project.organization_name %>
+                </a>
+                )
+
                 <br>
+
+                <!-- Project description -->
                 <%= project.description %>
+
                 <br>
+
+                <!-- Location -->
                 Location: <%= project.location %>
+
                 <br>
-                Date: <%= project.project_date %>
+
+                <!-- Date (FIXED FIELD NAME) -->
+                Date: <%= project.date %>
             </li>
         <% }); %>
     </ul>
