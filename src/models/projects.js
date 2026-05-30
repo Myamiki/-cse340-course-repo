@@ -12,7 +12,7 @@ const getAllProjects = async () => {
             title,
             description,
             location,
-            date
+            project_date
         FROM project;
     `;
 
@@ -33,10 +33,10 @@ const getProjectsByOrganizationId = async (organizationId) => {
             title,
             description,
             location,
-            date
+            project_date
         FROM project
         WHERE organization_id = $1
-        ORDER BY date;
+        ORDER BY project_date;
     `;
 
     const result = await db.query(query, [organizationId]);
@@ -45,9 +45,9 @@ const getProjectsByOrganizationId = async (organizationId) => {
 
 
 // =========================
-// Get upcoming projects (LIMITED)
+// Get upcoming projects
 // =========================
-const getUpcomingProjects = async (numberOfProjects) => {
+const getUpcomingProjects = async (limit) => {
 
     const query = `
         SELECT
@@ -55,18 +55,18 @@ const getUpcomingProjects = async (numberOfProjects) => {
             p.title,
             p.description,
             p.location,
-            p.date,
+            p.project_date,
             p.organization_id,
             o.name AS organization_name
         FROM project p
         JOIN organization o
             ON p.organization_id = o.organization_id
-        WHERE p.date >= CURRENT_DATE
-        ORDER BY p.date
+        WHERE p.project_date >= CURRENT_DATE
+        ORDER BY p.project_date
         LIMIT $1;
     `;
 
-    const result = await db.query(query, [numberOfProjects]);
+    const result = await db.query(query, [limit]);
     return result.rows;
 };
 
@@ -82,7 +82,7 @@ const getProjectDetails = async (projectId) => {
             p.title,
             p.description,
             p.location,
-            p.date,
+            p.project_date,
             p.organization_id,
             o.name AS organization_name
         FROM project p
@@ -97,7 +97,7 @@ const getProjectDetails = async (projectId) => {
 
 
 // =========================
-// Get categories for a project (IMPORTANT)
+// Get categories for a project
 // =========================
 const getCategoriesByProjectId = async (projectId) => {
 
@@ -117,7 +117,7 @@ const getCategoriesByProjectId = async (projectId) => {
 
 
 // =========================
-// Get all projects for a category (IMPORTANT)
+// Get projects by category
 // =========================
 const getProjectsByCategoryId = async (categoryId) => {
 
@@ -127,7 +127,7 @@ const getProjectsByCategoryId = async (categoryId) => {
             p.title,
             p.description,
             p.location,
-            p.date,
+            p.project_date,
             o.name AS organization_name
         FROM project p
         JOIN organization o
@@ -135,7 +135,7 @@ const getProjectsByCategoryId = async (categoryId) => {
         JOIN project_category pc
             ON p.project_id = pc.project_id
         WHERE pc.category_id = $1
-        ORDER BY p.date;
+        ORDER BY p.project_date;
     `;
 
     const result = await db.query(query, [categoryId]);
@@ -144,7 +144,7 @@ const getProjectsByCategoryId = async (categoryId) => {
 
 
 // =========================
-// Export ALL functions
+// EXPORT ALL FUNCTIONS
 // =========================
 export {
     getAllProjects,
