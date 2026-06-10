@@ -8,6 +8,7 @@
     <ul>
         <% projects.forEach(project => { %>
             <li>
+
                 <!-- Project title (CLICKABLE → project details page) -->
                 <strong>
                     <a href="/project/<%= project.project_id %>">
@@ -24,8 +25,8 @@
 
                 <br>
 
-                <!-- Project description -->
-                <%= project.description %>
+                <!-- Project description (shortened for better UI) -->
+                <%= project.description ? project.description.substring(0, 120) + '...' : '' %>
 
                 <br>
 
@@ -34,11 +35,13 @@
 
                 <br>
 
-                <!-- FIXED DATE FIELD -->
+                <!-- Date -->
                 Date: <%= project.project_date %>
+
             </li>
         <% }); %>
     </ul>
+
 </main>
 
 <%- include('partials/footer') %>

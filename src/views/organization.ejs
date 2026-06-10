@@ -3,6 +3,13 @@
 <main>
     <h1><%= organization.name %></h1>
 
+    <!-- EDIT LINK (ADDED) -->
+    <p>
+        <a href="/edit-organization/<%= organization.organization_id %>">
+            Edit Organization
+        </a>
+    </p>
+
     <p><%= organization.description %></p>
 
     <p>

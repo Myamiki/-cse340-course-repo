@@ -4,17 +4,29 @@ import { showHomePage } from './controllers/index.js';
 
 import {
     showOrganizationsPage,
-    showOrganizationDetailsPage
+    showOrganizationDetailsPage,
+    showNewOrganizationForm,
+    processNewOrganizationForm,
+    showEditOrganizationForm,
+    processEditOrganizationForm,
+    organizationValidation
 } from './controllers/organizations.js';
 
 import {
     showProjectsPage,
-    showProjectDetailsPage
+    showProjectDetailsPage,
+    showNewProjectForm,
+    processNewProjectForm,
+    showEditProjectForm,
+    processEditProjectForm,
+    projectValidation
 } from './controllers/projects.js';
 
 import {
     showCategoriesPage,
-    showCategoryDetailsPage
+    showCategoryDetailsPage,
+    showAssignCategoriesForm,
+    processAssignCategoriesForm
 } from './controllers/categories.js';
 
 import { testErrorPage } from './controllers/errors.js';
@@ -22,30 +34,60 @@ import { testErrorPage } from './controllers/errors.js';
 const router = express.Router();
 
 /**
- * Home page
+ * ======================
+ * HOME
+ * ======================
  */
 router.get('/', showHomePage);
 
 /**
- * Organization routes
+ * ======================
+ * ORGANIZATIONS
+ * ======================
  */
 router.get('/organizations', showOrganizationsPage);
 router.get('/organization/:id', showOrganizationDetailsPage);
 
+router.get('/new-organization', showNewOrganizationForm);
+router.post('/new-organization', organizationValidation, processNewOrganizationForm);
+
+router.get('/edit-organization/:id', showEditOrganizationForm);
+router.post('/edit-organization/:id', organizationValidation, processEditOrganizationForm);
+
 /**
- * Project routes
+ * ======================
+ * PROJECTS
+ * ======================
  */
 router.get('/projects', showProjectsPage);
 router.get('/project/:id', showProjectDetailsPage);
 
+router.get('/new-project', showNewProjectForm);
+router.post('/new-project', projectValidation, processNewProjectForm);
+
+router.get('/edit-project/:id', showEditProjectForm);
+router.post('/edit-project/:id', projectValidation, processEditProjectForm);
+
 /**
- * Category routes
+ * ======================
+ * CATEGORY ASSIGNMENT (W04 CORE)
+ * ======================
+ */
+router.get('/assign-categories/:projectId', showAssignCategoriesForm);
+router.post('/assign-categories/:projectId', processAssignCategoriesForm);
+
+/**
+ * ======================
+ * CATEGORIES
+ * ======================
  */
 router.get('/categories', showCategoriesPage);
 router.get('/category/:id', showCategoryDetailsPage);
 
 /**
- * Error test route
+ * ======================
+ * ERROR TEST
+ * ======================
  */
 router.get('/test-error', testErrorPage);
 

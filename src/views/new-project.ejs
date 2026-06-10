@@ -1,0 +1,96 @@
+<%- include('partials/header') %>
+
+<main>
+    <h1><%= title %></h1>
+
+    <!-- Flash messages (optional but useful if you already use flash) -->
+    <% if (messages && messages.error) { %>
+        <ul class="error-messages">
+            <% messages.error.forEach(msg => { %>
+                <li><%= msg %></li>
+            <% }) %>
+        </ul>
+    <% } %>
+
+    <% if (messages && messages.success) { %>
+        <ul class="success-messages">
+            <% messages.success.forEach(msg => { %>
+                <li><%= msg %></li>
+            <% }) %>
+        </ul>
+    <% } %>
+
+    <form action="/new-project" method="POST">
+
+        <!-- Project Title -->
+        <div class="form-group">
+            <label for="title">Project Title</label>
+            <input
+                type="text"
+                id="title"
+                name="title"
+                maxlength="200"
+                required
+            />
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea
+                id="description"
+                name="description"
+                maxlength="1000"
+                required
+            ></textarea>
+        </div>
+
+        <!-- Location -->
+        <div class="form-group">
+            <label for="location">Location</label>
+            <input
+                type="text"
+                id="location"
+                name="location"
+                maxlength="200"
+                required
+            />
+        </div>
+
+        <!-- Date -->
+        <div class="form-group">
+            <label for="date">Project Date</label>
+            <input
+                type="date"
+                id="date"
+                name="date"
+                required
+            />
+        </div>
+
+        <!-- Organization Dropdown -->
+        <div class="form-group">
+            <label for="organizationId">Organization</label>
+            <select
+                id="organizationId"
+                name="organizationId"
+                required
+            >
+                <option value="">Select an organization</option>
+
+                <% organizations.forEach(org => { %>
+                    <option value="<%= org.organization_id %>">
+                        <%= org.name %>
+                    </option>
+                <% }) %>
+
+            </select>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit">Create Project</button>
+
+    </form>
+</main>
+
+<%- include('partials/footer') %>

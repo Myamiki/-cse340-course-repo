@@ -4,7 +4,7 @@ import db from './db.js';
 // Get all projects
 // =========================
 const getAllProjects = async () => {
-    const query = `
+    const result = await db.query(`
         SELECT
             project_id,
             organization_id,
@@ -12,10 +12,10 @@ const getAllProjects = async () => {
             description,
             location,
             project_date
-        FROM project;
-    `;
+        FROM project
+        ORDER BY project_date DESC;
+    `);
 
-    const result = await db.query(query);
     return result.rows;
 };
 
@@ -23,7 +23,7 @@ const getAllProjects = async () => {
 // Get projects by organization
 // =========================
 const getProjectsByOrganizationId = async (organizationId) => {
-    const query = `
+    const result = await db.query(`
         SELECT
             project_id,
             organization_id,
@@ -34,9 +34,8 @@ const getProjectsByOrganizationId = async (organizationId) => {
         FROM project
         WHERE organization_id = $1
         ORDER BY project_date;
-    `;
+    `, [organizationId]);
 
-    const result = await db.query(query, [organizationId]);
     return result.rows;
 };
 
@@ -44,7 +43,7 @@ const getProjectsByOrganizationId = async (organizationId) => {
 // Get upcoming projects
 // =========================
 const getUpcomingProjects = async (limit) => {
-    const query = `
+    const result = await db.query(`
         SELECT
             p.project_id,
             p.title,
@@ -58,9 +57,8 @@ const getUpcomingProjects = async (limit) => {
             ON p.organization_id = o.organization_id
         ORDER BY p.project_date
         LIMIT $1;
-    `;
+    `, [limit]);
 
-    const result = await db.query(query, [limit]);
     return result.rows;
 };
 
@@ -68,7 +66,7 @@ const getUpcomingProjects = async (limit) => {
 // Get single project details
 // =========================
 const getProjectDetails = async (projectId) => {
-    const query = `
+    const result = await db.query(`
         SELECT
             p.project_id,
             p.title,
@@ -81,18 +79,16 @@ const getProjectDetails = async (projectId) => {
         JOIN organization o
             ON p.organization_id = o.organization_id
         WHERE p.project_id = $1;
-    `;
+    `, [projectId]);
 
-    const result = await db.query(query, [projectId]);
-    return result.rows[0];
+    return result.rows.length ? result.rows[0] : null;
 };
-
 
 // =========================
 // Get categories for a project
 // =========================
 const getCategoriesByProjectId = async (projectId) => {
-    const query = `
+    const result = await db.query(`
         SELECT
             c.category_id,
             c.name
@@ -100,18 +96,16 @@ const getCategoriesByProjectId = async (projectId) => {
         JOIN project_category pc
             ON c.category_id = pc.category_id
         WHERE pc.project_id = $1;
-    `;
+    `, [projectId]);
 
-    const result = await db.query(query, [projectId]);
     return result.rows;
 };
-
 
 // =========================
 // Get projects by category
 // =========================
 const getProjectsByCategoryId = async (categoryId) => {
-    const query = `
+    const result = await db.query(`
         SELECT
             p.project_id,
             p.title,
@@ -126,15 +120,88 @@ const getProjectsByCategoryId = async (categoryId) => {
             ON p.project_id = pc.project_id
         WHERE pc.category_id = $1
         ORDER BY p.project_date;
-    `;
+    `, [categoryId]);
 
-    const result = await db.query(query, [categoryId]);
     return result.rows;
 };
 
+// =========================
+// CREATE project
+// =========================
+const createProject = async (title, description, location, date, organizationId) => {
+
+    const result = await db.query(`
+        INSERT INTO project (
+            title,
+            description,
+            location,
+            project_date,
+            organization_id
+        )
+        VALUES ($1, $2, $3, $4, $5)
+        RETURNING project_id;
+    `, [
+        title,
+        description,
+        location,
+        date,
+        organizationId
+    ]);
+
+    if (!result.rows.length) {
+        throw new Error('Failed to create project');
+    }
+
+    if (process.env.ENABLE_SQL_LOGGING === 'true') {
+        console.log('Created project:', result.rows[0].project_id);
+    }
+
+    return result.rows[0].project_id;
+};
 
 // =========================
-// Export all functions
+// UPDATE project
+// =========================
+const updateProject = async (
+    projectId,
+    title,
+    description,
+    location,
+    date,
+    organizationId
+) => {
+
+    const result = await db.query(`
+        UPDATE project
+        SET title = $1,
+            description = $2,
+            location = $3,
+            project_date = $4,
+            organization_id = $5
+        WHERE project_id = $6
+        RETURNING project_id;
+    `, [
+        title,
+        description,
+        location,
+        date,
+        organizationId,
+        projectId
+    ]);
+
+    if (!result.rows.length) {
+        throw new Error('Project not found');
+    }
+
+    if (process.env.ENABLE_SQL_LOGGING === 'true') {
+        console.log('Updated project:', projectId);
+    }
+
+    return result.rows[0].project_id;
+};
+
+// =========================
+// EXPORTS
 // =========================
 export {
     getAllProjects,
@@ -142,5 +209,7 @@ export {
     getUpcomingProjects,
     getProjectDetails,
     getCategoriesByProjectId,
-    getProjectsByCategoryId
+    getProjectsByCategoryId,
+    createProject,
+    updateProject
 };
