@@ -49,7 +49,7 @@ app.use((req, res, next) => {
  * =========================
  */
 app.use(session({
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.SESSION_SECRET || 'temporary-dev-secret',
     resave: false,
     saveUninitialized: false, // improved (better practice for rubric professionalism)
     cookie: {
