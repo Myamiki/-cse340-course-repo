@@ -101,7 +101,8 @@ app.use((err, req, res, next) => {
  * START SERVER
  * =========================
  */
-app.listen(PORT, async () => {
+app.listen(PORT, '0.0.0.0',
+           async () => {
     try {
         await testConnection();
         console.log(`Server running at http://localhost:${PORT}`);
