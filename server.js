@@ -17,64 +17,58 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 /**
- * =========================
  * VIEW ENGINE
- * =========================
  */
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'src/views'));
 
 /**
- * =========================
  * MIDDLEWARE
- * =========================
  */
-
-// Body parsing
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
-// Static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Make environment available in views
-app.use((req, res, next) => {
-    res.locals.NODE_ENV = NODE_ENV;
-    next();
-});
-
 /**
- * =========================
  * SESSION
- * =========================
  */
 app.use(session({
     secret: process.env.SESSION_SECRET || 'temporary-dev-secret',
     resave: false,
-    saveUninitialized: false, // improved (better practice for rubric professionalism)
+    saveUninitialized: false,
     cookie: {
         maxAge: 60 * 60 * 1000 // 1 hour
     }
 }));
 
 /**
- * =========================
+ * GLOBAL VIEW VARIABLES
+ * (auth state + user role access)
+ */
+app.use((req, res, next) => {
+
+    res.locals.NODE_ENV = NODE_ENV;
+
+    const user = req.session?.user || null;
+
+    res.locals.isLoggedIn = !!user;
+    res.locals.user = user;
+
+    next();
+});
+
+/**
  * FLASH MESSAGES
- * =========================
  */
 app.use(flash);
 
 /**
- * =========================
  * ROUTES
- * =========================
  */
 app.use(router);
 
 /**
- * =========================
  * 404 HANDLER
- * =========================
  */
 app.use((req, res) => {
     res.status(404).render('errors/404', {
@@ -83,9 +77,7 @@ app.use((req, res) => {
 });
 
 /**
- * =========================
  * ERROR HANDLER
- * =========================
  */
 app.use((err, req, res, next) => {
     console.error(err);
@@ -97,16 +89,12 @@ app.use((err, req, res, next) => {
 });
 
 /**
- * =========================
  * START SERVER
- * =========================
  */
-app.listen(PORT, '0.0.0.0',
-           async () => {
+app.listen(PORT, async () => {
     try {
         await testConnection();
-        console.log(`Server running at http://localhost:${PORT}`);
-        console.log(`Environment: ${NODE_ENV}`);
+        console.log('Database connected successfully');
     } catch (err) {
         console.error('Database connection error:', err);
     }

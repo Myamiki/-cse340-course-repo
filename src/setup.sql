@@ -5,6 +5,8 @@
 DROP TABLE IF EXISTS project_category;
 DROP TABLE IF EXISTS project;
 DROP TABLE IF EXISTS category;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS roles;
 DROP TABLE IF EXISTS organization;
 
 -- ========================================
@@ -30,7 +32,6 @@ CREATE TABLE project (
     description TEXT NOT NULL,
     location VARCHAR(150) NOT NULL,
     project_date DATE NOT NULL,
-
     FOREIGN KEY (organization_id)
         REFERENCES organization(organization_id)
         ON DELETE CASCADE
@@ -46,7 +47,7 @@ CREATE TABLE category (
 );
 
 -- ========================================
--- PROJECT_CATEGORY (MANY-TO-MANY)
+-- PROJECT_CATEGORY TABLE
 -- ========================================
 
 CREATE TABLE project_category (
@@ -65,35 +66,61 @@ CREATE TABLE project_category (
 );
 
 -- ========================================
+-- ROLES TABLE
+-- ========================================
+
+CREATE TABLE roles (
+    role_id SERIAL PRIMARY KEY,
+    role_name VARCHAR(50) UNIQUE NOT NULL,
+    role_description TEXT
+);
+
+-- ========================================
+-- USERS TABLE
+-- ========================================
+
+CREATE TABLE users (
+    user_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    role_id INTEGER REFERENCES roles(role_id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ========================================
 -- INSERT ORGANIZATIONS
 -- ========================================
 
 INSERT INTO organization (name, description, contact_email, logo_filename)
 VALUES
-(
-    'BrightFuture Builders',
-    'A nonprofit focused on improving community infrastructure through sustainable construction projects.',
-    'info@brightfuturebuilders.org',
-    'brightfuture-logo.png'
+('BrightFuture Builders',
+'A nonprofit focused on improving community infrastructure through sustainable construction projects.',
+'info@brightfuturebuilders.org',
+'brightfuture-logo.png'
 ),
-(
-    'GreenHarvest Growers',
-    'An urban farming collective promoting food sustainability and education in local neighborhoods.',
-    'contact@greenharvest.org',
-    'greenharvest-logo.png'
+('GreenHarvest Growers',
+'An urban farming collective promoting food sustainability and education in local neighborhoods.',
+'contact@greenharvest.org',
+'greenharvest-logo.png'
 ),
-(
-    'UnityServe Volunteers',
-    'A volunteer coordination group supporting local charities and service initiatives.',
-    'hello@unityserve.org',
-    'unityserve-logo.png'
+('UnityServe Volunteers',
+'A volunteer coordination group supporting local charities and service initiatives.',
+'hello@unityserve.org',
+'unityserve-logo.png'
 );
 
 -- ========================================
 -- INSERT PROJECTS
 -- ========================================
 
-INSERT INTO project (organization_id, title, description, location, project_date)
+INSERT INTO project (
+    organization_id,
+    title,
+    description,
+    location,
+    project_date
+)
 VALUES
 (1, 'Build Community Library', 'Construct a small library for the local community.', 'Johannesburg', '2025-01-10'),
 (1, 'School Renovation', 'Renovate classrooms and improve facilities.', 'Pretoria', '2025-02-15'),
@@ -113,7 +140,7 @@ VALUES
 ('Community Service');
 
 -- ========================================
--- LINK PROJECTS TO CATEGORIES
+-- PROJECT CATEGORY LINKS
 -- ========================================
 
 INSERT INTO project_category (project_id, category_id)
@@ -124,3 +151,12 @@ VALUES
 (4, 2),
 (5, 3),
 (6, 3);
+
+-- ========================================
+-- INSERT ROLES
+-- ========================================
+
+INSERT INTO roles (role_name, role_description)
+VALUES
+('user', 'Standard user with basic access'),
+('admin', 'Administrator with full system access');

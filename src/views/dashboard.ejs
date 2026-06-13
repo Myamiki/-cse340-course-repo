@@ -1,0 +1,27 @@
+<%- include('partials/header') %>
+
+<main>
+    <h1><%= title %></h1>
+
+    <h2>Dashboard</h2>
+
+    <p>Name: <%= name %></p>
+    <p>Email: <%= email %></p>
+
+    <!-- Admin-only section -->
+    <% if (user && user.role_name === 'admin') { %>
+        <hr>
+
+        <h3>Admin Tools</h3>
+
+        <ul>
+            <li><a href="/users">Manage Users</a></li>
+            <li><a href="/new-organization">Add Organization</a></li>
+            <li><a href="/new-project">Add Project</a></li>
+            <li><a href="/categories">Manage Categories</a></li>
+        </ul>
+    <% } %>
+
+</main>
+
+<%- include('partials/footer') %>

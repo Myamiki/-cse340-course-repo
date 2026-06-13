@@ -29,6 +29,18 @@ import {
     processAssignCategoriesForm
 } from './controllers/categories.js';
 
+import {
+    showUserRegistrationForm,
+    processUserRegistrationForm,
+    showLoginForm,
+    processLoginForm,
+    processLogout,
+    requireLogin,
+    requireRole,
+    showDashboard,
+    showUsersPage   // ✅ ADDED
+} from './controllers/users.js';
+
 import { testErrorPage } from './controllers/errors.js';
 
 const router = express.Router();
@@ -42,17 +54,58 @@ router.get('/', showHomePage);
 
 /**
  * ======================
+ * AUTHENTICATION
+ * ======================
+ */
+router.get('/register', showUserRegistrationForm);
+router.post('/register', processUserRegistrationForm);
+
+router.get('/login', showLoginForm);
+router.post('/login', processLoginForm);
+router.get('/logout', processLogout);
+
+router.get('/dashboard', requireLogin, showDashboard);
+
+// ✅ USERS PAGE (ADMIN ONLY)
+router.get(
+    '/users',
+    requireRole('admin'),
+    showUsersPage
+);
+
+/**
+ * ======================
  * ORGANIZATIONS
  * ======================
  */
 router.get('/organizations', showOrganizationsPage);
 router.get('/organization/:id', showOrganizationDetailsPage);
 
-router.get('/new-organization', showNewOrganizationForm);
-router.post('/new-organization', organizationValidation, processNewOrganizationForm);
+router.get(
+    '/new-organization',
+    requireRole('admin'),
+    showNewOrganizationForm
+);
 
-router.get('/edit-organization/:id', showEditOrganizationForm);
-router.post('/edit-organization/:id', organizationValidation, processEditOrganizationForm);
+router.post(
+    '/new-organization',
+    requireRole('admin'),
+    organizationValidation,
+    processNewOrganizationForm
+);
+
+router.get(
+    '/edit-organization/:id',
+    requireRole('admin'),
+    showEditOrganizationForm
+);
+
+router.post(
+    '/edit-organization/:id',
+    requireRole('admin'),
+    organizationValidation,
+    processEditOrganizationForm
+);
 
 /**
  * ======================
@@ -62,19 +115,48 @@ router.post('/edit-organization/:id', organizationValidation, processEditOrganiz
 router.get('/projects', showProjectsPage);
 router.get('/project/:id', showProjectDetailsPage);
 
-router.get('/new-project', showNewProjectForm);
-router.post('/new-project', projectValidation, processNewProjectForm);
+router.get(
+    '/new-project',
+    requireRole('admin'),
+    showNewProjectForm
+);
 
-router.get('/edit-project/:id', showEditProjectForm);
-router.post('/edit-project/:id', projectValidation, processEditProjectForm);
+router.post(
+    '/new-project',
+    requireRole('admin'),
+    projectValidation,
+    processNewProjectForm
+);
+
+router.get(
+    '/edit-project/:id',
+    requireRole('admin'),
+    showEditProjectForm
+);
+
+router.post(
+    '/edit-project/:id',
+    requireRole('admin'),
+    projectValidation,
+    processEditProjectForm
+);
 
 /**
  * ======================
- * CATEGORY ASSIGNMENT (W04 CORE)
+ * CATEGORY ASSIGNMENT
  * ======================
  */
-router.get('/assign-categories/:projectId', showAssignCategoriesForm);
-router.post('/assign-categories/:projectId', processAssignCategoriesForm);
+router.get(
+    '/assign-categories/:projectId',
+    requireRole('admin'),
+    showAssignCategoriesForm
+);
+
+router.post(
+    '/assign-categories/:projectId',
+    requireRole('admin'),
+    processAssignCategoriesForm
+);
 
 /**
  * ======================
