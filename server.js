@@ -23,7 +23,7 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'src/views'));
 
 /**
- * MIDDLEWARE
+ * CORE MIDDLEWARE
  */
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -42,25 +42,31 @@ app.use(session({
 }));
 
 /**
+ * FLASH MIDDLEWARE (must come AFTER session)
+ */
+app.use(flash);
+
+/**
  * GLOBAL VIEW VARIABLES
- * (auth state + user role access)
+ * (safe defaults for ALL EJS templates)
  */
 app.use((req, res, next) => {
-
-    res.locals.NODE_ENV = NODE_ENV;
-
     const user = req.session?.user || null;
 
+    res.locals.NODE_ENV = NODE_ENV;
     res.locals.isLoggedIn = !!user;
     res.locals.user = user;
 
+    // ✅ CRITICAL FIX: always define messages so EJS never crashes
+    res.locals.messages = req.session.flash || {
+        success: [],
+        error: [],
+        warning: [],
+        info: []
+    };
+
     next();
 });
-
-/**
- * FLASH MESSAGES
- */
-app.use(flash);
 
 /**
  * ROUTES
@@ -80,11 +86,11 @@ app.use((req, res) => {
  * ERROR HANDLER
  */
 app.use((err, req, res, next) => {
-    console.error(err);
+    console.error('Server Error:', err);
 
     res.status(err.status || 500).render('errors/500', {
         title: 'Server Error',
-        error: err.message
+        error: err.message || 'Unexpected error'
     });
 });
 
@@ -98,7 +104,6 @@ app.listen(PORT, '0.0.0.0', async () => {
 
         console.log(`Server running at: http://localhost:${PORT}`);
         console.log(`Network access: http://127.0.0.1:${PORT}`);
-
     } catch (err) {
         console.error('Database connection error:', err);
     }
