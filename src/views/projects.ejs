@@ -1,0 +1,47 @@
+<%- include('partials/header') %>
+
+<main>
+    <h1><%= title %></h1>
+
+    <h2>Upcoming Service Projects</h2>
+
+    <ul>
+        <% projects.forEach(project => { %>
+            <li>
+
+                <!-- Project title (CLICKABLE → project details page) -->
+                <strong>
+                    <a href="/project/<%= project.project_id %>">
+                        <%= project.title %>
+                    </a>
+                </strong>
+
+                <!-- Organization name (CLICKABLE → organization page) -->
+                (
+                <a href="/organization/<%= project.organization_id %>">
+                    <%= project.organization_name %>
+                </a>
+                )
+
+                <br>
+
+                <!-- Project description (shortened for better UI) -->
+                <%= project.description ? project.description.substring(0, 120) + '...' : '' %>
+
+                <br>
+
+                <!-- Location -->
+                Location: <%= project.location %>
+
+                <br>
+
+                <!-- Date -->
+                Date: <%= project.project_date %>
+
+            </li>
+        <% }); %>
+    </ul>
+
+</main>
+
+<%- include('partials/footer') %>

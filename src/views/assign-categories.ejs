@@ -1,0 +1,55 @@
+<%- include('partials/header') %>
+
+<main>
+
+    <% if (!projectDetails) { %>
+
+        <h1>Project not found</h1>
+        <p>The project you are trying to access does not exist.</p>
+
+        <p>
+            <a href="/projects">← Back to Projects</a>
+        </p>
+
+    <% } else { %>
+
+        <h1><%= projectDetails.title %></h1>
+
+        <h2>Assign Categories</h2>
+
+        <form action="/assign-categories/<%= projectId %>" method="POST">
+
+            <div class="form-group">
+
+                <% categories.forEach(category => { %>
+
+                    <div>
+                        <input
+                            type="checkbox"
+                            id="category-<%= category.category_id %>"
+                            name="categoryIds"
+                            value="<%= category.category_id %>"
+                            <%= (assignedCategories || []).some(ac => ac.category_id === category.category_id) ? 'checked' : '' %>
+                        />
+
+                        <label for="category-<%= category.category_id %>">
+                            <%= category.name %>
+                        </label>
+                    </div>
+
+                <% }); %>
+
+            </div>
+
+            <button type="submit">Update Categories</button>
+        </form>
+
+        <p>
+            <a href="/project/<%= projectId %>">← Back to Project</a>
+        </p>
+
+    <% } %>
+
+</main>
+
+<%- include('partials/footer') %>
