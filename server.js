@@ -42,21 +42,13 @@ app.use(session({
 }));
 
 /**
-<<<<<<< HEAD
  * FLASH MIDDLEWARE (must come AFTER session)
-=======
- * FLASH MIDDLEWARE
->>>>>>> bbe22e7 (Fix database connection and production config)
  */
 app.use(flash);
 
 /**
-<<<<<<< HEAD
  * GLOBAL VIEW VARIABLES
  * (safe defaults for ALL EJS templates)
-=======
- * GLOBAL VARIABLES FOR VIEWS
->>>>>>> bbe22e7 (Fix database connection and production config)
  */
 app.use((req, res, next) => {
     const user = req.session?.user || null;
@@ -65,11 +57,7 @@ app.use((req, res, next) => {
     res.locals.isLoggedIn = !!user;
     res.locals.user = user;
 
-<<<<<<< HEAD
-    // ✅ CRITICAL FIX: always define messages so EJS never crashes
-=======
     // Always safe messages object (prevents EJS crashes)
->>>>>>> bbe22e7 (Fix database connection and production config)
     res.locals.messages = req.session.flash || {
         success: [],
         error: [],
@@ -100,23 +88,15 @@ app.use((req, res) => {
 app.use((err, req, res, next) => {
     console.error('Server Error:', err);
 
-<<<<<<< HEAD
-    res.status(500).send(`
-        <h1>Server Error</h1>
-        <pre>${err.stack}</pre>
-    `);
-=======
     res.status(500).render('errors/500', {
         title: 'Server Error'
     });
->>>>>>> bbe22e7 (Fix database connection and production config)
 });
 
 /**
  * START SERVER
  */
 app.listen(PORT, '0.0.0.0', async () => {
-<<<<<<< HEAD
     try {
         await testConnection();
         console.log('Database connected successfully');
@@ -127,15 +107,3 @@ app.listen(PORT, '0.0.0.0', async () => {
         console.error('Database connection error:', err);
     }
 });
-=======
-     try {
-         await testConnection();
-          console.log('Database connected successfully'); 
-          
-          console.log(`Server running at: http://localhost:${PORT}`); 
-          console.log(`Network access: http://127.0.0.1:${PORT}`); 
-        } catch (err) { 
-          console.error('Database connection error:', err); 
-        } 
-      }); 
->>>>>>> bbe22e7 (Fix database connection and production config)

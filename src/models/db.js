@@ -6,16 +6,11 @@ const { Pool } = pg;
  */
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-<<<<<<< HEAD
-    ssl: {
-        rejectUnauthorized: false
-    }
-=======
     ssl: process.env.NODE_ENV === 'production'
         ? { rejectUnauthorized: false }
         : false
->>>>>>> bbe22e7 (Fix database connection and production config)
 });
+
 /**
  * DB wrapper (adds logging in development)
  */
@@ -71,9 +66,5 @@ const testConnection = async () => {
     }
 };
 
-<<<<<<< HEAD
-export { db as default, testConnection };
-=======
 export default db;
 export { testConnection };
->>>>>>> bbe22e7 (Fix database connection and production config)
