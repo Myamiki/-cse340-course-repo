@@ -12,22 +12,35 @@ import { body, validationResult } from 'express-validator';
 
 const NUMBER_OF_UPCOMING_PROJECTS = 5;
 
+/**
+ * LIST PAGE
+ */
 const showProjectsPage = async (req, res, next) => {
     try {
-        const projects = await getUpcomingProjects(NUMBER_OF_UPCOMING_PROJECTS);
+        const projects = await getUpcomingProjects(NUMBER_OF_UPCOMING_PROJECTS) || [];
 
         res.render('projects', {
             title: 'Upcoming Service Projects',
             projects
         });
     } catch (err) {
+        console.error('Error loading projects page:', err);
         next(err);
     }
 };
 
+/**
+ * DETAILS PAGE
+ */
 const showProjectDetailsPage = async (req, res, next) => {
     try {
         const projectId = req.params.id;
+
+        if (!projectId) {
+            return res.status(400).render('errors/404', {
+                title: 'Project Not Found'
+            });
+        }
 
         const project = await getProjectDetails(projectId);
 
@@ -37,31 +50,41 @@ const showProjectDetailsPage = async (req, res, next) => {
             });
         }
 
-        const categories = await getCategoriesByProjectId(projectId);
+        const categories = await getCategoriesByProjectId(projectId) || [];
 
         res.render('project', {
             title: project.title,
             project,
             categories
         });
+
     } catch (err) {
+        console.error('Error loading project details:', err);
         next(err);
     }
 };
 
+/**
+ * NEW PROJECT FORM
+ */
 const showNewProjectForm = async (req, res, next) => {
     try {
-        const organizations = await getAllOrganizations();
+        const organizations = await getAllOrganizations() || [];
 
         res.render('new-project', {
             title: 'Add New Service Project',
             organizations
         });
+
     } catch (err) {
+        console.error('Error loading new project form:', err);
         next(err);
     }
 };
 
+/**
+ * CREATE PROJECT
+ */
 const processNewProjectForm = async (req, res, next) => {
     try {
         const results = validationResult(req);
@@ -76,21 +99,32 @@ const processNewProjectForm = async (req, res, next) => {
 
         const { title, description, location, date, organizationId } = req.body;
 
-        const newProjectId = await createProject(title, description, location, date, organizationId);
+        const newProjectId = await createProject(
+            title,
+            description,
+            location,
+            date,
+            organizationId
+        );
 
         req.flash('success', 'New service project created successfully!');
         res.redirect(`/project/${newProjectId}`);
+
     } catch (err) {
+        console.error('Error creating project:', err);
         next(err);
     }
 };
 
+/**
+ * EDIT FORM
+ */
 const showEditProjectForm = async (req, res, next) => {
     try {
         const projectId = req.params.id;
 
         const project = await getProjectDetails(projectId);
-        const organizations = await getAllOrganizations();
+        const organizations = await getAllOrganizations() || [];
 
         if (!project) {
             return res.status(404).render('errors/404', {
@@ -103,11 +137,16 @@ const showEditProjectForm = async (req, res, next) => {
             project,
             organizations
         });
+
     } catch (err) {
+        console.error('Error loading edit project form:', err);
         next(err);
     }
 };
 
+/**
+ * UPDATE PROJECT
+ */
 const processEditProjectForm = async (req, res, next) => {
     try {
         const projectId = req.params.id;
@@ -124,34 +163,43 @@ const processEditProjectForm = async (req, res, next) => {
 
         const { title, description, location, date, organizationId } = req.body;
 
-        await updateProject(projectId, title, description, location, date, organizationId);
+        await updateProject(
+            projectId,
+            title,
+            description,
+            location,
+            date,
+            organizationId
+        );
 
         req.flash('success', 'Project updated successfully!');
         res.redirect(`/project/${projectId}`);
+
     } catch (err) {
+        console.error('Error updating project:', err);
         next(err);
     }
 };
 
+/**
+ * VALIDATION
+ */
 const projectValidation = [
     body('title')
         .trim()
-        .notEmpty()
-        .withMessage('Title is required')
+        .notEmpty().withMessage('Title is required')
         .isLength({ min: 3, max: 200 })
         .withMessage('Title must be between 3 and 200 characters'),
 
     body('description')
         .trim()
-        .notEmpty()
-        .withMessage('Description is required')
+        .notEmpty().withMessage('Description is required')
         .isLength({ max: 1000 })
         .withMessage('Description cannot exceed 1000 characters'),
 
     body('location')
         .trim()
-        .notEmpty()
-        .withMessage('Location is required')
+        .notEmpty().withMessage('Location is required')
         .isLength({ max: 200 })
         .withMessage('Location cannot exceed 200 characters'),
 
