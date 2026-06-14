@@ -86,12 +86,12 @@ app.use((req, res) => {
  * ERROR HANDLER
  */
 app.use((err, req, res, next) => {
-    console.error('Server Error:', err);
+    console.error(err);
 
-    res.status(err.status || 500).render('errors/500', {
-        title: 'Server Error',
-        error: err.message || 'Unexpected error'
-    });
+    res.status(500).send(`
+        <h1>Server Error</h1>
+        <pre>${err.stack}</pre>
+    `);
 });
 
 /**
