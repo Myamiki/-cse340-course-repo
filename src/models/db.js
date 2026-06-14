@@ -2,6 +2,23 @@ import pg from 'pg';
 const { Pool } = pg;
 
 /**
+ * Temporary diagnostics
+ */
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('DATABASE_URL exists:', !!process.env.DATABASE_URL);
+
+if (process.env.DATABASE_URL) {
+    try {
+        const url = new URL(process.env.DATABASE_URL);
+
+        console.log('DB Host:', url.hostname);
+        console.log('DB Database:', url.pathname);
+    } catch (err) {
+        console.error('DATABASE_URL format error:', err.message);
+    }
+}
+
+/**
  * PostgreSQL connection pool
  */
 const pool = new Pool({
@@ -16,7 +33,10 @@ const pool = new Pool({
  */
 let db;
 
-if (process.env.NODE_ENV === 'development' && process.env.ENABLE_SQL_LOGGING === 'true') {
+if (
+    process.env.NODE_ENV === 'development' &&
+    process.env.ENABLE_SQL_LOGGING === 'true'
+) {
     db = {
         async query(text, params) {
             try {
@@ -38,6 +58,7 @@ if (process.env.NODE_ENV === 'development' && process.env.ENABLE_SQL_LOGGING ===
                     text: text.replace(/\s+/g, ' ').trim(),
                     error: error.message
                 });
+
                 throw error;
             }
         },
@@ -55,13 +76,22 @@ if (process.env.NODE_ENV === 'development' && process.env.ENABLE_SQL_LOGGING ===
  */
 const testConnection = async () => {
     try {
-        const result = await db.query('SELECT NOW() as current_time');
+        const result = await db.query(
+            'SELECT NOW() as current_time'
+        );
 
-        console.log('Database connected:', result.rows[0].current_time);
+        console.log(
+            'Database connected:',
+            result.rows[0].current_time
+        );
 
         return true;
     } catch (error) {
-        console.error('Database connection failed:', error.message);
+        console.error(
+            'Database connection failed:',
+            error.message
+        );
+
         throw error;
     }
 };
