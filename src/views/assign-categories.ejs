@@ -2,53 +2,52 @@
 
 <main>
 
-    <% if (!projectDetails) { %>
+  <% if (!projectDetails) { %>
+    <div class="error-page">
+      <div class="error-code">404</div>
+      <h2>Project Not Found</h2>
+      <p>The project you are looking for does not exist.</p>
+      <a href="/projects" class="btn" style="margin-top:16px;">&larr; Back to Projects</a>
+    </div>
+  <% } else { %>
+    <a href="/project/<%= projectId %>" class="back-link">&larr; Back to Project</a>
 
-        <h1>Project not found</h1>
-        <p>The project you are trying to access does not exist.</p>
-
-        <p>
-            <a href="/projects">← Back to Projects</a>
-        </p>
-
-    <% } else { %>
-
-        <h1><%= projectDetails.title %></h1>
-
-        <h2>Assign Categories</h2>
+    <div class="form-card" style="max-width:520px;">
+      <div class="form-card-header">
+        <h1>Assign Categories</h1>
+        <p><%= projectDetails.title %></p>
+      </div>
+      <div class="form-card-body">
 
         <form action="/assign-categories/<%= projectId %>" method="POST">
 
-            <div class="form-group">
-
-                <% categories.forEach(category => { %>
-
-                    <div>
-                        <input
-                            type="checkbox"
-                            id="category-<%= category.category_id %>"
-                            name="categoryIds"
-                            value="<%= category.category_id %>"
-                            <%= (assignedCategories || []).some(ac => ac.category_id === category.category_id) ? 'checked' : '' %>
-                        />
-
-                        <label for="category-<%= category.category_id %>">
-                            <%= category.name %>
-                        </label>
-                    </div>
-
-                <% }); %>
-
+          <div class="form-group">
+            <label>Select categories for this project</label>
+            <div class="checkbox-group" style="margin-top:10px;">
+              <% categories.forEach(category => { %>
+                <div class="checkbox-item">
+                  <input
+                    type="checkbox"
+                    id="cat-<%= category.category_id %>"
+                    name="categoryIds"
+                    value="<%= category.category_id %>"
+                    <%= (assignedCategories || []).some(ac => ac.category_id === category.category_id) ? 'checked' : '' %>
+                  >
+                  <label for="cat-<%= category.category_id %>"><%= category.name %></label>
+                </div>
+              <% }); %>
             </div>
+          </div>
 
+          <div class="form-actions">
             <button type="submit">Update Categories</button>
+            <a href="/project/<%= projectId %>" class="btn btn-ghost">Cancel</a>
+          </div>
+
         </form>
-
-        <p>
-            <a href="/project/<%= projectId %>">← Back to Project</a>
-        </p>
-
-    <% } %>
+      </div>
+    </div>
+  <% } %>
 
 </main>
 

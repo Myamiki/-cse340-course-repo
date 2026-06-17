@@ -1,20 +1,19 @@
 <%- include('partials/header') %>
 
 <main>
-    <h1><%= title %></h1>
+  <h1><%= title %></h1>
+  <p style="color:var(--muted);margin-bottom:36px;">Browse volunteer opportunities by cause area.</p>
 
-    <h2>Service Categories</h2>
-
-    <ul>
-        <% categories.forEach(category => { %>
-            <li>
-                <a href="/category/<%= category.category_id %>">
-                    <%= category.name %>
-                </a>
-            </li>
-        <% }); %>
-    </ul>
-
+  <ul class="cat-grid">
+    <% categories.forEach(category => { %>
+      <li>
+        <a href="/category/<%= category.category_id %>" class="cat-card">
+          <span><%= category.name %></span>
+          <span style="color:var(--muted);font-size:.8rem;">&rarr;</span>
+        </a>
+      </li>
+    <% }); %>
+  </ul>
 </main>
 
 <%- include('partials/footer') %>

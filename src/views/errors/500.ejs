@@ -1,30 +1,24 @@
 <%- include('../partials/header') %>
 
 <main>
-    <h1>Something Went Wrong</h1>
-
-    <p>
-        We are experiencing technical difficulties.
-        Our team has been notified and is working to fix the issue.
-    </p>
-
-    <p>
-        Return to the <a href="/">homepage</a> to continue browsing.
-    </p>
+  <div class="error-page">
+    <div class="error-code">500</div>
+    <h2>Something Went Wrong</h2>
+    <p>We're experiencing technical difficulties. Our team has been notified and is working on a fix.</p>
+    <a href="/" class="btn" style="margin-top:20px;">&larr; Back to Home</a>
 
     <% if (typeof NODE_ENV !== 'undefined' && NODE_ENV === 'development') { %>
-        <details open>
-            <summary>Error Details (Development Only)</summary>
-
-            <% if (typeof error !== 'undefined' && error) { %>
-                <pre><%= error %></pre>
-            <% } %>
-
-            <% if (typeof stack !== 'undefined' && stack) { %>
-                <pre><%= stack %></pre>
-            <% } %>
-        </details>
+      <details style="margin-top:32px;text-align:left;max-width:640px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:20px;">
+        <summary style="cursor:pointer;font-weight:600;color:var(--muted);">Error Details (Development Only)</summary>
+        <% if (typeof error !== 'undefined' && error) { %>
+          <pre style="margin-top:12px;font-size:.82rem;overflow:auto;color:#dc2626;"><%= error %></pre>
+        <% } %>
+        <% if (typeof stack !== 'undefined' && stack) { %>
+          <pre style="margin-top:8px;font-size:.78rem;overflow:auto;color:var(--muted);"><%= stack %></pre>
+        <% } %>
+      </details>
     <% } %>
+  </div>
 </main>
 
 <%- include('../partials/footer') %>

@@ -1,0 +1,23 @@
+<h2>My Volunteer Projects</h2>
+
+<% if (volunteerProjects && volunteerProjects.length > 0) { %>
+
+    <ul>
+        <% volunteerProjects.forEach(project => { %>
+            <li>
+                <strong><%= project.title %></strong>
+
+                <form action="/volunteer/remove/<%= project.project_id %>" method="POST" style="display:inline;">
+                    <button type="submit">
+                        Remove
+                    </button>
+                </form>
+            </li>
+        <% }) %>
+    </ul>
+
+<% } else { %>
+
+    <p>You are not volunteering for any projects yet.</p>
+
+<% } %>

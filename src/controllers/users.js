@@ -5,6 +5,8 @@ import {
     getAllUsers
 } from '../models/users.js';
 
+import * as volunteerModel from '../models/volunteer-model.js';
+
 /**
  * ======================
  * REGISTER
@@ -12,9 +14,7 @@ import {
  */
 
 const showUserRegistrationForm = (req, res) => {
-    res.render('register', {
-        title: 'Register'
-    });
+    res.render('register', { title: 'Register' });
 };
 
 const processUserRegistrationForm = async (req, res) => {
@@ -33,15 +33,16 @@ const processUserRegistrationForm = async (req, res) => {
 
         req.flash('success', 'Registration successful! Please log in.');
         return res.redirect('/login');
+
     } catch (error) {
-        console.error('Error registering user:', error);
+        console.error(error);
 
         if (error.code === '23505') {
-            req.flash('error', 'An account with that email already exists.');
-            return res.redirect('/register');
+            req.flash('error', 'Email already exists.');
+        } else {
+            req.flash('error', 'Registration failed.');
         }
 
-        req.flash('error', 'An error occurred during registration.');
         return res.redirect('/register');
     }
 };
@@ -53,9 +54,7 @@ const processUserRegistrationForm = async (req, res) => {
  */
 
 const showLoginForm = (req, res) => {
-    res.render('login', {
-        title: 'Login'
-    });
+    res.render('login', { title: 'Login' });
 };
 
 const processLoginForm = async (req, res) => {
@@ -75,8 +74,8 @@ const processLoginForm = async (req, res) => {
         return res.redirect('/dashboard');
 
     } catch (error) {
-        console.error('Login error:', error);
-        req.flash('error', 'An error occurred while logging in.');
+        console.error(error);
+        req.flash('error', 'Login error.');
         return res.redirect('/login');
     }
 };
@@ -88,10 +87,7 @@ const processLoginForm = async (req, res) => {
  */
 
 const processLogout = (req, res) => {
-    req.session.destroy((error) => {
-        if (error) {
-            console.error('Logout error:', error);
-        }
+    req.session.destroy(() => {
         res.redirect('/login');
     });
 };
@@ -103,48 +99,65 @@ const processLogout = (req, res) => {
  */
 
 const requireLogin = (req, res, next) => {
-    if (!req.session || !req.session.user) {
-        req.flash('error', 'You must be logged in to access that page.');
+    if (!req.session?.user) {
+        req.flash('error', 'You must log in first.');
         return res.redirect('/login');
     }
     next();
 };
 
-const requireRole = (role) => {
-    return (req, res, next) => {
-        if (!req.session || !req.session.user) {
-            req.flash('error', 'You must be logged in to access this page.');
-            return res.redirect('/login');
-        }
+const requireRole = (role) => (req, res, next) => {
+    if (!req.session?.user) {
+        req.flash('error', 'You must log in first.');
+        return res.redirect('/login');
+    }
 
-        if (req.session.user.role_name !== role) {
-            req.flash('error', 'You do not have permission to access this page.');
-            return res.redirect('/dashboard');
-        }
+    if (req.session.user.role_name !== role) {
+        req.flash('error', 'Access denied.');
+        return res.redirect('/dashboard');
+    }
 
-        next();
-    };
+    next();
 };
 
 /**
  * ======================
- * DASHBOARD
+ * DASHBOARD (FIXED)
  * ======================
  */
 
-const showDashboard = (req, res) => {
-    const user = req.session.user;
+const showDashboard = async (req, res) => {
+    try {
+        const user = req.session.user;
 
-    res.render('dashboard', {
-        title: 'Dashboard',
-        name: user.name,
-        email: user.email
-    });
+        let volunteerProjects = [];
+
+        try {
+            volunteerProjects =
+                await volunteerModel.getVolunteerProjects(user.user_id);
+        } catch (dbError) {
+            console.error("Volunteer query failed:", dbError);
+            volunteerProjects = [];
+        }
+
+        res.render('dashboard', {
+            title: 'Dashboard',
+            name: user.name,
+            email: user.email,
+            volunteerProjects
+        });
+
+    } catch (error) {
+        console.error('Dashboard error:', error);
+
+        req.flash('error', 'Unable to load dashboard.');
+        return res.redirect('/login');
+    }
 };
 
 /**
  * ======================
- * USERS PAGE (ADMIN ONLY)
+ * USERS PAGE
  * ======================
  */
 
@@ -156,19 +169,13 @@ const showUsersPage = async (req, res) => {
             title: 'Users',
             users
         });
-    } catch (error) {
-        console.error('Error loading users page:', error);
 
-        req.flash('error', 'Unable to load users page.');
+    } catch (error) {
+        console.error(error);
+        req.flash('error', 'Unable to load users.');
         res.redirect('/dashboard');
     }
 };
-
-/**
- * ======================
- * EXPORTS
- * ======================
- */
 
 export {
     showUserRegistrationForm,

@@ -1,25 +1,30 @@
 <%- include('partials/header') %>
 
 <main>
-    <h1><%= category.name %></h1>
+  <a href="/categories" class="back-link">&larr; Back to Categories</a>
 
-    <h2>Projects in this Category</h2>
+  <h1><%= category.name %></h1>
+  <p style="color:var(--muted);margin-bottom:32px;">Service projects in this category.</p>
 
-    <ul>
-        <% projects.forEach(project => { %>
-            <li>
-                <a href="/project/<%= project.project_id %>">
-                    <%= project.title %>
-                </a>
-
-                (<%= project.organization_name %>)
-            </li>
-        <% }); %>
+  <% if (!projects || projects.length === 0) { %>
+    <p style="color:var(--muted);text-align:center;padding:60px 0;">No projects in this category yet.</p>
+  <% } else { %>
+    <ul class="card-grid">
+      <% projects.forEach(project => { %>
+        <li class="card">
+          <div class="card-body">
+            <h3><a href="/project/<%= project.project_id %>"><%= project.title %></a></h3>
+            <div class="card-meta">
+              <span class="card-meta-item">&#127970; <%= project.organization_name %></span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <a href="/project/<%= project.project_id %>" class="btn btn-sm">View details</a>
+          </div>
+        </li>
+      <% }); %>
     </ul>
-
-    <p>
-        <a href="/categories">← Back to Categories</a>
-    </p>
+  <% } %>
 </main>
 
 <%- include('partials/footer') %>

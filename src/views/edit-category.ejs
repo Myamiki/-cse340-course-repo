@@ -1,31 +1,30 @@
 <%- include('partials/header') %>
 
 <main>
-    <h1>Edit Category</h1>
+  <a href="/categories" class="back-link">&larr; Back to Categories</a>
 
-    <form action="/edit-category/<%= category.category_id %>" method="POST">
+  <div class="form-card">
+    <div class="form-card-header">
+      <h1>Edit Category</h1>
+      <p>Update the name of this category.</p>
+    </div>
+    <div class="form-card-body">
 
-        <!-- Category Name -->
+      <form action="/edit-category/<%= category.category_id %>" method="POST">
+
         <div class="form-group">
-            <label for="name">Category Name</label>
-
-            <input
-                type="text"
-                id="name"
-                name="name"
-                value="<%= category.name %>"
-                maxlength="100"
-                required
-            />
+          <label for="name">Category Name</label>
+          <input type="text" id="name" name="name" value="<%= category.name %>" maxlength="100" required>
         </div>
 
-        <button type="submit">Update Category</button>
+        <div class="form-actions">
+          <button type="submit">Save Changes</button>
+          <a href="/categories" class="btn btn-ghost">Cancel</a>
+        </div>
 
-    </form>
-
-    <p>
-        <a href="/categories">← Back to Categories</a>
-    </p>
+      </form>
+    </div>
+  </div>
 </main>
 
 <%- include('partials/footer') %>

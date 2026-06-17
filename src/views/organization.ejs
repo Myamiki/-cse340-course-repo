@@ -1,39 +1,38 @@
 <%- include('partials/header') %>
 
 <main>
-    <h1><%= organization.name %></h1>
+  <a href="/organizations" class="back-link">&larr; Back to Organizations</a>
 
-    <!-- EDIT LINK (ADMIN ONLY) -->
-    <% if (user && user.role_name === 'admin') { %>
-        <p>
-            <a href="/edit-organization/<%= organization.organization_id %>">
-                Edit Organization
-            </a>
-        </p>
-    <% } %>
+  <div class="detail-card">
+    <div class="detail-header">
+      <h1><%= organization.name %></h1>
+      <p style="color:rgba(255,255,255,.75);margin:0;font-size:.95rem;">&#9993; <%= organization.contact_email %></p>
+    </div>
 
-    <p><%= organization.description %></p>
+    <div class="detail-body">
+      <p class="detail-desc"><%= organization.description %></p>
 
-    <p>
-        <strong>Contact:</strong>
-        <%= organization.contact_email %>
-    </p>
+      <% if (user && user.role_name === 'admin') { %>
+        <div style="margin-bottom:28px;">
+          <a href="/edit-organization/<%= organization.organization_id %>" class="btn btn-sm">&#9998; Edit Organization</a>
+        </div>
+      <% } %>
 
-    <h2>Projects</h2>
+      <h2 style="margin-top:0;">Projects</h2>
 
-    <ul>
-        <% projects.forEach(project => { %>
+      <% if (!projects || projects.length === 0) { %>
+        <p style="color:var(--muted);">No projects yet for this organization.</p>
+      <% } else { %>
+        <ul class="project-list">
+          <% projects.forEach(project => { %>
             <li>
-                <a href="/project/<%= project.project_id %>">
-                    <%= project.title %>
-                </a>
+              <a href="/project/<%= project.project_id %>"><%= project.title %></a>
             </li>
-        <% }); %>
-    </ul>
-
-    <p>
-        <a href="/organizations">← Back to Organizations</a>
-    </p>
+          <% }); %>
+        </ul>
+      <% } %>
+    </div>
+  </div>
 </main>
 
 <%- include('partials/footer') %>

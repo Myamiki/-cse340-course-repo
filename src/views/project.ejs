@@ -1,39 +1,52 @@
 <%- include('partials/header') %>
 
 <main>
-    <h1><%= project.title %></h1>
+  <a href="/projects" class="back-link">&larr; Back to Projects</a>
 
-    <p><strong>Organization:</strong> <%= project.organization_name %></p>
+  <div class="detail-card">
+    <div class="detail-header">
+      <div class="breadcrumb">
+        <a href="/organization/<%= project.organization_id %>"><%= project.organization_name %></a>
+      </div>
+      <h1><%= project.title %></h1>
+    </div>
 
-    <p><strong>Description:</strong> <%= project.description %></p>
+    <div class="detail-body">
+      <p class="detail-desc"><%= project.description %></p>
 
-    <p><strong>Location:</strong> <%= project.location %></p>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <label>&#128205; Location</label>
+          <p><%= project.location %></p>
+        </div>
+        <div class="detail-item">
+          <label>&#128197; Date</label>
+          <p><%= new Date(project.project_date).toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric', year:'numeric'}) %></p>
+        </div>
+        <div class="detail-item">
+          <label>&#127970; Organization</label>
+          <p><a href="/organization/<%= project.organization_id %>"><%= project.organization_name %></a></p>
+        </div>
+      </div>
 
-    <p><strong>Date:</strong> <%= project.project_date %></p>
-
-    <h2>Categories</h2>
-
-    <ul>
-        <% if (!categories || categories.length === 0) { %>
-            <li>No categories assigned</li>
-        <% } else { %>
-            <% categories.forEach(category => { %>
-                <li><%= category.name %></li>
+      <% if (categories && categories.length > 0) { %>
+        <div>
+          <label style="display:block;font-size:.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:12px;">Categories</label>
+          <div style="display:flex;flex-wrap:wrap;gap:10px;">
+            <% categories.forEach(cat => { %>
+              <span class="tag"><%= cat.name %></span>
             <% }); %>
-        <% } %>
-    </ul>
+          </div>
+        </div>
+      <% } %>
 
-    <% if (user && user.role_name === 'admin') { %>
-        <p>
-            <a href="/assign-categories/<%= project.project_id %>">
-                Edit Categories
-            </a>
-        </p>
-    <% } %>
-
-    <p>
-        <a href="/projects">← Back to Projects</a>
-    </p>
+      <% if (user && user.role_name === 'admin') { %>
+        <div style="margin-top:28px;padding-top:22px;border-top:1px solid var(--border);">
+          <a href="/assign-categories/<%= project.project_id %>" class="btn btn-sm">&#9998; Edit Categories</a>
+        </div>
+      <% } %>
+    </div>
+  </div>
 </main>
 
 <%- include('partials/footer') %>

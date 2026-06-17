@@ -1,33 +1,27 @@
 <%- include('partials/header') %>
 
 <main>
-    <h1><%= title %></h1>
-
-    <p>Here are a few of our partner organizations:</p>
-
-    <ul>
-        <% organizations.forEach(organization => { %>
-            <li>
-                <img 
-                    src="/images/<%= organization.logo_filename %>" 
-                    alt="<%= organization.name %> logo"
-                >
-
-                <a href="/organization/<%= organization.organization_id %>">
-                    <%= organization.name %>
-                </a>
-
-                : <%= organization.contact_email %>
-            </li>
-        <% }); %>
-    </ul>
-
+  <div class="section-header" style="margin-bottom:8px;">
+    <h1 style="margin:0;"><%= title %></h1>
     <% if (user && user.role_name === 'admin') { %>
-        <p>
-            <a href="/new-organization">Add a new organization</a>
-        </p>
+      <a href="/new-organization" class="btn btn-sm btn-accent">+ Add Organization</a>
     <% } %>
+  </div>
+  <p style="color:var(--muted);margin-bottom:36px;">Our partner organizations making a difference in communities everywhere.</p>
 
+  <ul class="card-grid" style="list-style:none;padding:0;margin:0;">
+    <% organizations.forEach(org => { %>
+      <li>
+        <a href="/organization/<%= org.organization_id %>" class="org-card">
+          <img class="org-logo" src="/images/<%= org.logo_filename %>" alt="<%= org.name %> logo">
+          <div>
+            <div class="org-name"><%= org.name %></div>
+            <div class="org-email">&#9993; <%= org.contact_email %></div>
+          </div>
+        </a>
+      </li>
+    <% }); %>
+  </ul>
 </main>
 
 <%- include('partials/footer') %>

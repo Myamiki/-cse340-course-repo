@@ -1,46 +1,37 @@
 <%- include('partials/header') %>
 
 <main>
-    <h1><%= title %></h1>
+  <h1><%= title %></h1>
 
-    <h2>Upcoming Service Projects</h2>
+  <ul class="card-grid" style="margin-top:32px;">
+    <% projects.forEach(project => { %>
+      <li class="card">
+        <div class="card-body">
+          <h3>
+            <a href="/project/<%= project.project_id %>"><%= project.title %></a>
+          </h3>
+          <div class="card-meta">
+            <span class="card-meta-item">
+              &#127970;
+              <a href="/organization/<%= project.organization_id %>" style="color:var(--primary-light);font-weight:600;font-size:.82rem;">
+                <%= project.organization_name %>
+              </a>
+            </span>
+            <span class="card-meta-item">&#128205; <%= project.location %></span>
+            <span class="card-meta-item">&#128197; <%= new Date(project.project_date).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}) %></span>
+          </div>
+          <p class="card-desc"><%= project.description ? project.description.substring(0, 120) + '…' : '' %></p>
+        </div>
+        <div class="card-footer">
+          <a href="/project/<%= project.project_id %>" class="btn btn-sm">View details</a>
+        </div>
+      </li>
+    <% }); %>
+  </ul>
 
-    <ul>
-        <% projects.forEach(project => { %>
-            <li>
-
-                <!-- Project title (CLICKABLE → project details page) -->
-                <strong>
-                    <a href="/project/<%= project.project_id %>">
-                        <%= project.title %>
-                    </a>
-                </strong>
-
-                <!-- Organization name (CLICKABLE → organization page) -->
-                (
-                <a href="/organization/<%= project.organization_id %>">
-                    <%= project.organization_name %>
-                </a>
-                )
-
-                <br>
-
-                <!-- Project description (shortened for better UI) -->
-                <%= project.description ? project.description.substring(0, 120) + '...' : '' %>
-
-                <br>
-
-                <!-- Location -->
-                Location: <%= project.location %>
-
-                <br>
-
-                <!-- Date -->
-                Date: <%= project.project_date %>
-
-            </li>
-        <% }); %>
-    </ul>
+  <% if (!projects || projects.length === 0) { %>
+    <p style="color:var(--muted);text-align:center;padding:60px 0;">No upcoming projects found.</p>
+  <% } %>
 
 </main>
 

@@ -1,27 +1,52 @@
 <%- include('partials/header') %>
 
 <main>
-    <h1><%= title %></h1>
+  <h1 style="margin-bottom:28px;"><%= title %></h1>
 
-    <h2>Dashboard</h2>
+  <div class="dashboard-grid">
 
-    <p>Name: <%= name %></p>
-    <p>Email: <%= email %></p>
+    <div class="profile-card">
+      <div class="profile-card-top">
+        <div class="avatar"><%= name ? name.charAt(0).toUpperCase() : '?' %></div>
+        <div class="profile-name"><%= name %></div>
+        <div class="profile-role"><%= user && user.role_name ? user.role_name : 'Member' %></div>
+      </div>
+      <div class="profile-card-body">
+        <div class="profile-info-item">
+          <strong>Email</strong>
+          <span><%= email %></span>
+        </div>
+        <div class="profile-info-item">
+          <strong>Member since</strong>
+          <span><%= new Date().getFullYear() %></span>
+        </div>
+      </div>
+    </div>
 
-    <!-- Admin-only section -->
-    <% if (user && user.role_name === 'admin') { %>
-        <hr>
+    <div>
+      <% if (user && user.role_name === 'admin') { %>
+        <div class="admin-tools">
+          <h3>&#9881; Admin Tools</h3>
+          <ul class="admin-link-list">
+            <li><a href="/users" class="admin-link">&#128101; Manage Users</a></li>
+            <li><a href="/new-organization" class="admin-link">&#127970; Add Organization</a></li>
+            <li><a href="/new-project" class="admin-link">&#128203; Add Project</a></li>
+            <li><a href="/categories" class="admin-link">&#127991; Manage Categories</a></li>
+          </ul>
+        </div>
+      <% } else { %>
+        <div class="admin-tools">
+          <h3>&#128203; Quick Links</h3>
+          <ul class="admin-link-list">
+            <li><a href="/projects" class="admin-link">&#128203; Browse Projects</a></li>
+            <li><a href="/organizations" class="admin-link">&#127970; View Organizations</a></li>
+            <li><a href="/categories" class="admin-link">&#127991; Explore Categories</a></li>
+          </ul>
+        </div>
+      <% } %>
+    </div>
 
-        <h3>Admin Tools</h3>
-
-        <ul>
-            <li><a href="/users">Manage Users</a></li>
-            <li><a href="/new-organization">Add Organization</a></li>
-            <li><a href="/new-project">Add Project</a></li>
-            <li><a href="/categories">Manage Categories</a></li>
-        </ul>
-    <% } %>
-
+  </div>
 </main>
 
 <%- include('partials/footer') %>

@@ -1,0 +1,32 @@
+<% if (locals.loggedin) { %>
+
+    <% if (!volunteerStatus) { %>
+
+        <!-- USER IS NOT A VOLUNTEER YET -->
+        <form action="/volunteer/add/<%= project.project_id %>" method="POST">
+            <button type="submit">
+                Volunteer for this Project
+            </button>
+        </form>
+
+    <% } else { %>
+
+        <!-- USER IS ALREADY A VOLUNTEER -->
+        <p><strong>You are volunteering for this project.</strong></p>
+
+        <form action="/volunteer/remove/<%= project.project_id %>" method="POST">
+            <button type="submit">
+                Remove Volunteer
+            </button>
+        </form>
+
+    <% } %>
+
+<% } else { %>
+
+    <!-- NOT LOGGED IN -->
+    <p>
+        <a href="/login">Log in</a> to volunteer for this project.
+    </p>
+
+<% } %>

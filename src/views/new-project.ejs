@@ -1,96 +1,62 @@
 <%- include('partials/header') %>
 
 <main>
-    <h1><%= title %></h1>
+  <a href="/projects" class="back-link">&larr; Back to Projects</a>
 
-    <!-- Flash messages (optional but useful if you already use flash) -->
-    <% if (messages && messages.error) { %>
-        <ul class="error-messages">
-            <% messages.error.forEach(msg => { %>
-                <li><%= msg %></li>
-            <% }) %>
-        </ul>
-    <% } %>
+  <div class="form-card" style="max-width:680px;">
+    <div class="form-card-header">
+      <h1><%= title %></h1>
+      <p>Fill in the details to create a new service project.</p>
+    </div>
+    <div class="form-card-body">
 
-    <% if (messages && messages.success) { %>
-        <ul class="success-messages">
-            <% messages.success.forEach(msg => { %>
-                <li><%= msg %></li>
-            <% }) %>
-        </ul>
-    <% } %>
+      <% if (messages && messages.error) { %>
+        <% messages.error.forEach(msg => { %><div class="alert error"><%= msg %></div><% }); %>
+      <% } %>
+      <% if (messages && messages.success) { %>
+        <% messages.success.forEach(msg => { %><div class="alert success"><%= msg %></div><% }); %>
+      <% } %>
 
-    <form action="/new-project" method="POST">
+      <form action="/new-project" method="POST">
 
-        <!-- Project Title -->
         <div class="form-group">
-            <label for="title">Project Title</label>
-            <input
-                type="text"
-                id="title"
-                name="title"
-                maxlength="200"
-                required
-            />
+          <label for="title">Project Title</label>
+          <input type="text" id="title" name="title" maxlength="200" required placeholder="e.g. Community Garden Build-out">
         </div>
 
-        <!-- Description -->
         <div class="form-group">
-            <label for="description">Description</label>
-            <textarea
-                id="description"
-                name="description"
-                maxlength="1000"
-                required
-            ></textarea>
+          <label for="description">Description</label>
+          <textarea id="description" name="description" maxlength="1000" required placeholder="Describe the project, tasks, and who should join…"></textarea>
         </div>
 
-        <!-- Location -->
         <div class="form-group">
-            <label for="location">Location</label>
-            <input
-                type="text"
-                id="location"
-                name="location"
-                maxlength="200"
-                required
-            />
+          <label for="location">Location</label>
+          <input type="text" id="location" name="location" maxlength="200" required placeholder="e.g. Lents Park, Portland, OR">
         </div>
 
-        <!-- Date -->
         <div class="form-group">
-            <label for="date">Project Date</label>
-            <input
-                type="date"
-                id="date"
-                name="date"
-                required
-            />
+          <label for="date">Project Date</label>
+          <input type="date" id="date" name="date" required>
         </div>
 
-        <!-- Organization Dropdown -->
         <div class="form-group">
-            <label for="organizationId">Organization</label>
-            <select
-                id="organizationId"
-                name="organizationId"
-                required
-            >
-                <option value="">Select an organization</option>
-
-                <% organizations.forEach(org => { %>
-                    <option value="<%= org.organization_id %>">
-                        <%= org.name %>
-                    </option>
-                <% }) %>
-
-            </select>
+          <label for="organizationId">Organization</label>
+          <select id="organizationId" name="organizationId" required>
+            <option value="">Select an organization</option>
+            <% organizations.forEach(org => { %>
+              <option value="<%= org.organization_id %>"><%= org.name %></option>
+            <% }); %>
+          </select>
         </div>
 
-        <!-- Submit -->
-        <button type="submit">Create Project</button>
+        <div class="form-actions">
+          <button type="submit">Create Project</button>
+          <a href="/projects" class="btn btn-ghost">Cancel</a>
+        </div>
 
-    </form>
+      </form>
+    </div>
+  </div>
 </main>
 
 <%- include('partials/footer') %>

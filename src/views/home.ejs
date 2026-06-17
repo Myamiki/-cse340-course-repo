@@ -1,22 +1,22 @@
+
 <%- include('partials/header') %>
 
 <main>
-    <h1><%= title %></h1>
 
-    <h2>Welcome to the CSE 340 Service Network!</h2>
+  <section class="hero">
+    <div class="hero-badge">&#10024; Community Service Platform</div>
+    <h1>Give your time.<br><span>Make a difference.</span></h1>
+    <p>Service Network connects passionate people with local organizations that need them most. Browse projects, pick a cause, and show up.</p>
+    <div class="hero-actions">
+      <a href="/projects" class="btn-hero">Projects &rarr;</a>
+    </div>
+  </section>
 
-    <p>
-        Our mission is to promote service across the world
-        by connecting volunteers with service opportunities
-        in their community.
-    </p>
-
-    <!-- ✅ DASHBOARD LINK (W05 REQUIREMENT) -->
-    <% if (isLoggedIn) { %>
-        <p>
-            <a href="/dashboard">My Dashboard</a>
-        </p>
-    <% } %>
+  <% if (isLoggedIn) { %>
+    <div style="margin-bottom:32px;">
+      <a href="/dashboard" class="btn">Go to My Dashboard</a>
+    </div>
+  <% } %>
 
 </main>
 

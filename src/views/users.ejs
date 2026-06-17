@@ -1,31 +1,35 @@
 <%- include('partials/header') %>
 
 <main>
-    <h1><%= title %></h1>
+  <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:28px;">
+    <h1 style="margin:0;"><%= title %></h1>
+    <a href="/dashboard" class="back-link" style="margin:0;">&larr; Dashboard</a>
+  </div>
 
+  <div class="table-wrap">
     <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Role</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            <% users.forEach(user => { %>
-                <tr>
-                    <td><%= user.name %></td>
-                    <td><%= user.email %></td>
-                    <td><%= user.role_name %></td>
-                </tr>
-            <% }) %>
-        </tbody>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% users.forEach(u => { %>
+          <tr>
+            <td style="font-weight:600;"><%= u.name %></td>
+            <td style="color:var(--muted)"><%= u.email %></td>
+            <td>
+              <span class="badge <%= u.role_name === 'admin' ? 'badge-admin' : 'badge-member' %>">
+                <%= u.role_name %>
+              </span>
+            </td>
+          </tr>
+        <% }); %>
+      </tbody>
     </table>
-
-    <p>
-        <a href="/dashboard">← Back to Dashboard</a>
-    </p>
+  </div>
 </main>
 
 <%- include('partials/footer') %>
