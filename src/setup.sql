@@ -203,3 +203,11 @@ VALUES
 -- (1, 1),
 -- (1, 3),
 -- (2, 5);
+
+INSERT INTO users (name, email, password_hash, role_id)
+VALUES (
+  'Admin User',
+  'admin@example.com',
+  '$2b$10$Wj1Guj76rWHMwr3VwiC4DeBcHFDlD3S8GZuVNtnN.nkkGgnX0QOky',
+  (SELECT role_id FROM roles WHERE role_name = 'admin')
+);
