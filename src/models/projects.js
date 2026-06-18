@@ -55,7 +55,7 @@ const getUpcomingProjects = async (limit) => {
         FROM project p
         JOIN organization o
             ON p.organization_id = o.organization_id
-        ORDER BY p.project_date
+        ORDER BY p.project_date DESC
         LIMIT $1;
     `, [limit]);
 
@@ -152,10 +152,6 @@ const createProject = async (title, description, location, date, organizationId)
         throw new Error('Failed to create project');
     }
 
-    if (process.env.ENABLE_SQL_LOGGING === 'true') {
-        console.log('Created project:', result.rows[0].project_id);
-    }
-
     return result.rows[0].project_id;
 };
 
@@ -191,10 +187,6 @@ const updateProject = async (
 
     if (!result.rows.length) {
         throw new Error('Project not found');
-    }
-
-    if (process.env.ENABLE_SQL_LOGGING === 'true') {
-        console.log('Updated project:', projectId);
     }
 
     return result.rows[0].project_id;

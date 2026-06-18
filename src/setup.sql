@@ -15,11 +15,11 @@ DROP TABLE IF EXISTS organization;
 -- ========================================
 
 CREATE TABLE organization (
-organization_id SERIAL PRIMARY KEY,
-name VARCHAR(150) NOT NULL,
-description TEXT NOT NULL,
-contact_email VARCHAR(255) NOT NULL,
-logo_filename VARCHAR(255) NOT NULL
+    organization_id SERIAL PRIMARY KEY,
+    name VARCHAR(150) NOT NULL,
+    description TEXT NOT NULL,
+    contact_email VARCHAR(255) NOT NULL,
+    logo_filename VARCHAR(255) NOT NULL
 );
 
 -- ========================================
@@ -27,15 +27,15 @@ logo_filename VARCHAR(255) NOT NULL
 -- ========================================
 
 CREATE TABLE project (
-project_id SERIAL PRIMARY KEY,
-organization_id INTEGER NOT NULL,
-title VARCHAR(200) NOT NULL,
-description TEXT NOT NULL,
-location VARCHAR(150) NOT NULL,
-project_date DATE NOT NULL,
-FOREIGN KEY (organization_id)
-REFERENCES organization(organization_id)
-ON DELETE CASCADE
+    project_id SERIAL PRIMARY KEY,
+    organization_id INTEGER NOT NULL,
+    title VARCHAR(200) NOT NULL,
+    description TEXT NOT NULL,
+    location VARCHAR(150) NOT NULL,
+    project_date DATE NOT NULL,
+    FOREIGN KEY (organization_id)
+        REFERENCES organization(organization_id)
+        ON DELETE CASCADE
 );
 
 -- ========================================
@@ -43,8 +43,8 @@ ON DELETE CASCADE
 -- ========================================
 
 CREATE TABLE category (
-category_id SERIAL PRIMARY KEY,
-name VARCHAR(100) NOT NULL UNIQUE
+    category_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE
 );
 
 -- ========================================
@@ -52,21 +52,18 @@ name VARCHAR(100) NOT NULL UNIQUE
 -- ========================================
 
 CREATE TABLE project_category (
-project_id INTEGER NOT NULL,
-category_id INTEGER NOT NULL,
+    project_id INTEGER NOT NULL,
+    category_id INTEGER NOT NULL,
 
-```
-PRIMARY KEY (project_id, category_id),
+    PRIMARY KEY (project_id, category_id),
 
-FOREIGN KEY (project_id)
-    REFERENCES project(project_id)
-    ON DELETE CASCADE,
+    FOREIGN KEY (project_id)
+        REFERENCES project(project_id)
+        ON DELETE CASCADE,
 
-FOREIGN KEY (category_id)
-    REFERENCES category(category_id)
-    ON DELETE CASCADE
-```
-
+    FOREIGN KEY (category_id)
+        REFERENCES category(category_id)
+        ON DELETE CASCADE
 );
 
 -- ========================================
@@ -74,9 +71,9 @@ FOREIGN KEY (category_id)
 -- ========================================
 
 CREATE TABLE roles (
-role_id SERIAL PRIMARY KEY,
-role_name VARCHAR(50) UNIQUE NOT NULL,
-role_description TEXT
+    role_id SERIAL PRIMARY KEY,
+    role_name VARCHAR(50) UNIQUE NOT NULL,
+    role_description TEXT
 );
 
 -- ========================================
@@ -84,86 +81,80 @@ role_description TEXT
 -- ========================================
 
 CREATE TABLE users (
-user_id SERIAL PRIMARY KEY,
-name VARCHAR(100) NOT NULL,
-email VARCHAR(100) UNIQUE NOT NULL,
-password_hash VARCHAR(255) NOT NULL,
-role_id INTEGER REFERENCES roles(role_id),
-created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    user_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    role_id INTEGER REFERENCES roles(role_id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- ========================================
--- VOLUNTEER TABLE (MANY TO MANY)
+-- VOLUNTEER TABLE
 -- ========================================
 
 CREATE TABLE volunteer (
-volunteer_id SERIAL PRIMARY KEY,
+    volunteer_id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    project_id INTEGER NOT NULL,
+    signup_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-```
-user_id INTEGER NOT NULL,
-project_id INTEGER NOT NULL,
+    CONSTRAINT fk_volunteer_user
+        FOREIGN KEY (user_id)
+        REFERENCES users(user_id)
+        ON DELETE CASCADE,
 
-signup_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_volunteer_project
+        FOREIGN KEY (project_id)
+        REFERENCES project(project_id)
+        ON DELETE CASCADE,
 
-CONSTRAINT fk_volunteer_user
-    FOREIGN KEY (user_id)
-    REFERENCES users(user_id)
-    ON DELETE CASCADE,
-
-CONSTRAINT fk_volunteer_project
-    FOREIGN KEY (project_id)
-    REFERENCES project(project_id)
-    ON DELETE CASCADE,
-
-CONSTRAINT unique_volunteer
-    UNIQUE (user_id, project_id)
-```
-
+    CONSTRAINT unique_volunteer
+        UNIQUE (user_id, project_id)
 );
 
 -- ========================================
--- INSERT ORGANIZATIONS
+-- ORGANIZATIONS
 -- ========================================
 
 INSERT INTO organization (name, description, contact_email, logo_filename)
 VALUES
 ('BrightFuture Builders',
 'A nonprofit focused on improving community infrastructure through sustainable construction projects.',
-'[info@brightfuturebuilders.org](mailto:info@brightfuturebuilders.org)',
-'brightfuture-logo.png'
-),
+'info@brightfuturebuilders.org',
+'brightfuture-logo.png'),
+
 ('GreenHarvest Growers',
 'An urban farming collective promoting food sustainability and education in local neighborhoods.',
-'[contact@greenharvest.org](mailto:contact@greenharvest.org)',
-'greenharvest-logo.png'
-),
+'contact@greenharvest.org',
+'greenharvest-logo.png'),
+
 ('UnityServe Volunteers',
 'A volunteer coordination group supporting local charities and service initiatives.',
-'[hello@unityserve.org](mailto:hello@unityserve.org)',
-'unityserve-logo.png'
-);
+'hello@unityserve.org',
+'unityserve-logo.png');
 
 -- ========================================
--- INSERT PROJECTS
+-- PROJECTS (ALL FUTURE DATES)
 -- ========================================
 
 INSERT INTO project (
-organization_id,
-title,
-description,
-location,
-project_date
+    organization_id,
+    title,
+    description,
+    location,
+    project_date
 )
 VALUES
-(1, 'Build Community Library', 'Construct a small library for the local community.', 'Johannesburg', '2025-01-10'),
-(1, 'School Renovation', 'Renovate classrooms and improve facilities.', 'Pretoria', '2025-02-15'),
-(2, 'Urban Garden Setup', 'Create rooftop gardens.', 'Cape Town', '2025-01-12'),
-(2, 'Food Distribution Drive', 'Distribute fresh produce.', 'Durban', '2025-03-22'),
-(3, 'Food Bank Support', 'Help organize food donations.', 'Johannesburg', '2025-01-05'),
-(3, 'Community Clean-Up', 'Clean local neighborhoods.', 'Soweto', '2025-05-22');
+(1, 'Build Community Library', 'Construct a small library for the local community.', 'Johannesburg', '2027-01-10'),
+(1, 'School Renovation', 'Renovate classrooms and improve facilities.', 'Pretoria', '2027-02-15'),
+(2, 'Urban Garden Setup', 'Create rooftop gardens.', 'Cape Town', '2027-03-12'),
+(2, 'Food Distribution Drive', 'Distribute fresh produce.', 'Durban', '2027-04-22'),
+(3, 'Food Bank Support', 'Help organize food donations.', 'Johannesburg', '2027-05-05'),
+(3, 'Community Clean-Up', 'Clean local neighborhoods.', 'Soweto', '2027-06-22');
 
 -- ========================================
--- INSERT CATEGORIES
+-- CATEGORIES
 -- ========================================
 
 INSERT INTO category (name)
@@ -173,7 +164,7 @@ VALUES
 ('Community Service');
 
 -- ========================================
--- PROJECT CATEGORY LINKS
+-- PROJECT CATEGORIES
 -- ========================================
 
 INSERT INTO project_category (project_id, category_id)
@@ -186,7 +177,7 @@ VALUES
 (6, 3);
 
 -- ========================================
--- INSERT ROLES
+-- ROLES
 -- ========================================
 
 INSERT INTO roles (role_name, role_description)
@@ -195,19 +186,34 @@ VALUES
 ('admin', 'Administrator with full system access');
 
 -- ========================================
--- OPTIONAL TEST VOLUNTEER DATA
+-- SAMPLE USER
 -- ========================================
-
--- INSERT INTO volunteer (user_id, project_id)
--- VALUES
--- (1, 1),
--- (1, 3),
--- (2, 5);
 
 INSERT INTO users (name, email, password_hash, role_id)
 VALUES (
-  'Admin User',
-  'admin@example.com',
-  '$2b$10$Wj1Guj76rWHMwr3VwiC4DeBcHFDlD3S8GZuVNtnN.nkkGgnX0QOky',
-  (SELECT role_id FROM roles WHERE role_name = 'admin')
+    'Test User',
+    'user@example.com',
+    'YOUR_BCRYPT_HASH_HERE',
+    (SELECT role_id FROM roles WHERE role_name = 'user')
 );
+
+-- ========================================
+-- ADMIN USER
+-- ========================================
+
+INSERT INTO users (name, email, password_hash, role_id)
+VALUES (
+    'Admin User',
+    'admin@example.com',
+    'YOUR_BCRYPT_HASH_HERE',
+    (SELECT role_id FROM roles WHERE role_name = 'admin')
+);
+
+-- ========================================
+-- SAMPLE VOLUNTEERING DATA
+-- ========================================
+
+INSERT INTO volunteer (user_id, project_id)
+VALUES
+(1, 1),
+(1, 3);

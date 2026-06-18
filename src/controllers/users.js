@@ -125,7 +125,6 @@ const requireRole = (role) => (req, res, next) => {
  * DASHBOARD (FIXED)
  * ======================
  */
-
 const showDashboard = async (req, res) => {
     try {
         const user = req.session.user;
@@ -144,6 +143,7 @@ const showDashboard = async (req, res) => {
             title: 'Dashboard',
             name: user.name,
             email: user.email,
+            user, // ✅ IMPORTANT: allows EJS role + login checks
             volunteerProjects
         });
 
@@ -154,7 +154,6 @@ const showDashboard = async (req, res) => {
         return res.redirect('/login');
     }
 };
-
 /**
  * ======================
  * USERS PAGE

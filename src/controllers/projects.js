@@ -7,17 +7,17 @@ import {
 } from '../models/projects.js';
 
 import { getAllOrganizations } from '../models/organizations.js';
-
 import { body, validationResult } from 'express-validator';
 
-const NUMBER_OF_UPCOMING_PROJECTS = 5;
+import { isVolunteer as checkIfVolunteer } from '../models/volunteer-model.js';
+
 
 /**
  * LIST PAGE
  */
 const showProjectsPage = async (req, res, next) => {
     try {
-        const projects = await getUpcomingProjects(NUMBER_OF_UPCOMING_PROJECTS) || [];
+        const projects = await getUpcomingProjects(5) || [];
 
         res.render('projects', {
             title: 'Upcoming Service Projects',
@@ -28,6 +28,7 @@ const showProjectsPage = async (req, res, next) => {
         next(err);
     }
 };
+
 
 /**
  * DETAILS PAGE
@@ -52,10 +53,29 @@ const showProjectDetailsPage = async (req, res, next) => {
 
         const categories = await getCategoriesByProjectId(projectId) || [];
 
+        let volunteerStatus = false;
+
+        // ✅ CONSISTENT SESSION HANDLING
+        const userId = req.session?.user?.user_id || req.session?.user_id;
+
+        if (userId) {
+            try {
+                volunteerStatus = await checkIfVolunteer(
+                    userId,
+                    Number(projectId)
+                );
+            } catch (err) {
+                console.error("Volunteer check failed:", err);
+                volunteerStatus = false;
+            }
+        }
+
         res.render('project', {
             title: project.title,
             project,
-            categories
+            categories,
+            user: req.session.user || null,
+            volunteerStatus
         });
 
     } catch (err) {
@@ -63,6 +83,7 @@ const showProjectDetailsPage = async (req, res, next) => {
         next(err);
     }
 };
+
 
 /**
  * NEW PROJECT FORM
@@ -75,12 +96,12 @@ const showNewProjectForm = async (req, res, next) => {
             title: 'Add New Service Project',
             organizations
         });
-
     } catch (err) {
         console.error('Error loading new project form:', err);
         next(err);
     }
 };
+
 
 /**
  * CREATE PROJECT
@@ -90,10 +111,7 @@ const processNewProjectForm = async (req, res, next) => {
         const results = validationResult(req);
 
         if (!results.isEmpty()) {
-            results.array().forEach((error) => {
-                req.flash('error', error.msg);
-            });
-
+            results.array().forEach(e => req.flash('error', e.msg));
             return res.redirect('/new-project');
         }
 
@@ -107,14 +125,15 @@ const processNewProjectForm = async (req, res, next) => {
             organizationId
         );
 
-        req.flash('success', 'New service project created successfully!');
+        req.flash('success', 'Project created successfully!');
         res.redirect(`/project/${newProjectId}`);
 
     } catch (err) {
-        console.error('Error creating project:', err);
+        console.error(err);
         next(err);
     }
 };
+
 
 /**
  * EDIT FORM
@@ -139,10 +158,11 @@ const showEditProjectForm = async (req, res, next) => {
         });
 
     } catch (err) {
-        console.error('Error loading edit project form:', err);
+        console.error(err);
         next(err);
     }
 };
+
 
 /**
  * UPDATE PROJECT
@@ -154,10 +174,7 @@ const processEditProjectForm = async (req, res, next) => {
         const results = validationResult(req);
 
         if (!results.isEmpty()) {
-            results.array().forEach((error) => {
-                req.flash('error', error.msg);
-            });
-
+            results.array().forEach(e => req.flash('error', e.msg));
             return res.redirect(`/edit-project/${projectId}`);
         }
 
@@ -176,42 +193,27 @@ const processEditProjectForm = async (req, res, next) => {
         res.redirect(`/project/${projectId}`);
 
     } catch (err) {
-        console.error('Error updating project:', err);
+        console.error(err);
         next(err);
     }
 };
+
 
 /**
  * VALIDATION
  */
 const projectValidation = [
-    body('title')
-        .trim()
-        .notEmpty().withMessage('Title is required')
-        .isLength({ min: 3, max: 200 })
-        .withMessage('Title must be between 3 and 200 characters'),
-
-    body('description')
-        .trim()
-        .notEmpty().withMessage('Description is required')
-        .isLength({ max: 1000 })
-        .withMessage('Description cannot exceed 1000 characters'),
-
-    body('location')
-        .trim()
-        .notEmpty().withMessage('Location is required')
-        .isLength({ max: 200 })
-        .withMessage('Location cannot exceed 200 characters'),
-
-    body('date')
-        .notEmpty()
-        .withMessage('Date is required'),
-
-    body('organizationId')
-        .notEmpty()
-        .withMessage('Organization is required')
+    body('title').notEmpty().withMessage('Title is required'),
+    body('description').notEmpty().withMessage('Description is required'),
+    body('location').notEmpty().withMessage('Location is required'),
+    body('date').notEmpty().withMessage('Date is required'),
+    body('organizationId').notEmpty().withMessage('Organization is required')
 ];
 
+
+/**
+ * EXPORTS
+ */
 export {
     showProjectsPage,
     showProjectDetailsPage,

@@ -1,52 +1,33 @@
-<%- include('partials/header') %>
+<!-- VOLUNTEER FEATURE -->
+<% if (user) { %>
+  <div style="margin-top:25px;">
+    
+    <% if (volunteerStatus) { %>
 
-<main>
-  <a href="/projects" class="back-link">&larr; Back to Projects</a>
+      <form action="/volunteer/remove/<%= project.project_id %>" method="POST">
+        <button type="submit" class="btn">
+          Remove Volunteer
+        </button>
+      </form>
 
-  <div class="detail-card">
-    <div class="detail-header">
-      <div class="breadcrumb">
-        <a href="/organization/<%= project.organization_id %>"><%= project.organization_name %></a>
-      </div>
-      <h1><%= project.title %></h1>
-    </div>
+    <% } else { %>
 
-    <div class="detail-body">
-      <p class="detail-desc"><%= project.description %></p>
+      <form action="/volunteer/add/<%= project.project_id %>" method="POST">
+        <button type="submit" class="btn">
+          Volunteer for this Project
+        </button>
+      </form>
 
-      <div class="detail-grid">
-        <div class="detail-item">
-          <label>&#128205; Location</label>
-          <p><%= project.location %></p>
-        </div>
-        <div class="detail-item">
-          <label>&#128197; Date</label>
-          <p><%= new Date(project.project_date).toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric', year:'numeric'}) %></p>
-        </div>
-        <div class="detail-item">
-          <label>&#127970; Organization</label>
-          <p><a href="/organization/<%= project.organization_id %>"><%= project.organization_name %></a></p>
-        </div>
-      </div>
+    <% } %>
 
-      <% if (categories && categories.length > 0) { %>
-        <div>
-          <label style="display:block;font-size:.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:12px;">Categories</label>
-          <div style="display:flex;flex-wrap:wrap;gap:10px;">
-            <% categories.forEach(cat => { %>
-              <span class="tag"><%= cat.name %></span>
-            <% }); %>
-          </div>
-        </div>
-      <% } %>
-
-      <% if (user && user.role_name === 'admin') { %>
-        <div style="margin-top:28px;padding-top:22px;border-top:1px solid var(--border);">
-          <a href="/assign-categories/<%= project.project_id %>" class="btn btn-sm">&#9998; Edit Categories</a>
-        </div>
-      <% } %>
-    </div>
   </div>
-</main>
 
-<%- include('partials/footer') %>
+<% } else { %>
+
+  <div style="margin-top:25px;">
+    <a href="/login" class="btn">
+      Login to Volunteer
+    </a>
+  </div>
+
+<% } %>

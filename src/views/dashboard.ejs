@@ -11,11 +11,13 @@
         <div class="profile-name"><%= name %></div>
         <div class="profile-role"><%= user && user.role_name ? user.role_name : 'Member' %></div>
       </div>
+
       <div class="profile-card-body">
         <div class="profile-info-item">
           <strong>Email</strong>
           <span><%= email %></span>
         </div>
+
         <div class="profile-info-item">
           <strong>Member since</strong>
           <span><%= new Date().getFullYear() %></span>
@@ -47,6 +49,52 @@
     </div>
 
   </div>
+
+  <!-- ============================= -->
+  <!-- VOLUNTEERED PROJECTS SECTION -->
+  <!-- ============================= -->
+
+  <div style="margin-top:40px;">
+    <h2>My Volunteer Projects</h2>
+
+    <% if (volunteerProjects && volunteerProjects.length > 0) { %>
+
+      <div class="dashboard-list">
+
+        <% volunteerProjects.forEach(project => { %>
+          <div class="dashboard-item" style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #ddd;">
+
+            <div>
+              <strong>
+                <a href="/project/<%= project.project_id %>">
+                  <%= project.title %>
+                </a>
+              </strong>
+
+              <p style="margin:5px 0;color:#666;">
+                <%= project.location %>
+              </p>
+            </div>
+
+            <form action="/volunteer/remove/<%= project.project_id %>" method="POST">
+              <button type="submit" class="btn">
+                Remove
+              </button>
+            </form>
+
+          </div>
+        <% }) %>
+
+      </div>
+
+    <% } else { %>
+
+      <p>You are not volunteering for any projects yet.</p>
+
+    <% } %>
+
+  </div>
+
 </main>
 
 <%- include('partials/footer') %>

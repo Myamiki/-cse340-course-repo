@@ -50,11 +50,14 @@ const verifyPassword = async (password, passwordHash) => {
 const authenticateUser = async (email, password) => {
     const user = await findUserByEmail(email);
 
-    if (!user) {
+    if (!user || !user.password_hash) {
         return null;
     }
 
-    const passwordValid = await verifyPassword(password, user.password_hash);
+    const passwordValid = await bcrypt.compare(
+        password,
+        user.password_hash
+    );
 
     if (!passwordValid) {
         return null;
